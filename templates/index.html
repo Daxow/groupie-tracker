@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<body>
+    <h1>Groupie Tracker</h1>
+
+    <div class="artists">
+        {{range .}}
+        <div class="image">
+            <img src="{{.Image}}">
+            <h2>{{.Name}}</h2>
+            <p>Créé en {{.CreationDate}}<br>
+               Premier album : {{.FirstAlbum}}</p>
+            <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>
