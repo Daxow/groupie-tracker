@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
-
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
     <h1>Groupie Tracker</h1>
 
@@ -10,7 +13,7 @@
             <img src="{{.Image}}">
             <h2>{{.Name}}</h2>
             <p>Créé en {{.CreationDate}}<br>
-               Premier album : {{.FirstAlbum}}</p>
+                Premier album : {{.FirstAlbum}}</p>
             <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
         </div>
         {{end}}
