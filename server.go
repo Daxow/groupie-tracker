@@ -24,25 +24,31 @@ func NewServer() *Server {
 	}
 }
 
-func (s *Server) RegisterRoutes() {
-	http.HandleFunc("/", s.handleHome)
+func (server *Server) RegisterRoutes() {
+	http.HandleFunc("/", server.handleHome)
+	http.HandleFunc("/search", server.handleSearch)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 }
 
-func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+func (server *Server) handleHome(response http.ResponseWriter, request *http.Request) {
+	if request.URL.Path != "/" {
+		http.NotFound(response, request)
 		return
 	}
 
-	s.renderPage(w, "index.html", s.Artists)
+	data := PageData {
+		Query:   "",
+		Artists: server.Artists,
+	}
+
+	server.renderPage(response, "index.html", data)
 }
 
-func (s *Server) renderPage(w http.ResponseWriter, name string, data []Artist) {
-	err := s.Templates.ExecuteTemplate(w, name, data)
+func (server *Server) renderPage(response http.ResponseWriter, name string, data any) {
+	err := server.Templates.ExecuteTemplate(response, name, data)
 	if err != nil {
-		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
+		http.Error(response, "Erreur serveur", http.StatusInternalServerError)
 		log.Println("Erreur template :", err)
 	}
 }
@@ -96,4 +102,25 @@ func SearchArtists(artists []Artist, search string) []Artist {
 	}
 
 	return result
+}
+
+type PageData struct {
+	Query   string
+	Artists []Artist
+}
+
+func (server *Server) handleSearch(response http.ResponseWriter, request *http.Request) {
+	query := strings.TrimSpace(request.URL.Query().Get("query"))
+
+	artists := server.Artists
+	if query != "" {
+		artists = SearchArtists(server.Artists, query)
+	}
+
+	data := PageData{
+		Query:   query,
+		Artists: artists,
+	}
+
+	server.renderPage(response, "index.html", data)
 }
