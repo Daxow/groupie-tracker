@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr">
-
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
-    <h1>Groupie Tracker</h1>
+<h1>Groupie Tracker</h1>
 
-    <div class="artists">
-        {{range .}}
-        <div class="image">
-            <img src="{{.Image}}">
-            <h2>{{.Name}}</h2>
-            <p>Créé en {{.CreationDate}}<br>
-               Premier album : {{.FirstAlbum}}</p>
-            <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
-        </div>
-        {{end}}
+<form class="search" action="/search" method="GET">
+    <input type="text" name="query" placeholder="Rechercher..." value="{{.Query}}">
+    <button type="submit">Rechercher</button>
+</form>
+
+<div class="artists">
+    {{range .Artists}}
+    <div class="image">
+        <img src="{{.Image}}">
+        <h2>{{.Name}}</h2>
+        <p>Créé en {{.CreationDate}}<br>
+            Premier album : {{.FirstAlbum}}</p>
+        <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
     </div>
+    {{end}}
+</div>
 </body>
 </html>
