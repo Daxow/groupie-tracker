@@ -20,6 +20,19 @@
         <p>Créé en {{.CreationDate}}<br>
             Premier album : {{.FirstAlbum}}</p>
         <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
+        <p>Concerts :</p>
+         <ul>
+            {{range .Concerts}}
+                <li>
+                    <strong>{{.Location}}</strong>
+                    <ul>
+                        {{range .Dates}}
+                            <li>{{.}}</li>
+                        {{end}}
+                    </ul>
+                </li>
+            {{end}}
+         </ul>
     </div>
     {{end}}
 </div>
