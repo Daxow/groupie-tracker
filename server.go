@@ -22,6 +22,8 @@ func NewServer() *Server {
 	dates := fetchDates()
 	relations := fetchRelations()
 
+	artists = linkArtistsWithLocations(artists, relations)
+
 	templates := template.Must(template.ParseGlob("templates/*.html"))
 
 	return &Server{
@@ -132,4 +134,22 @@ func (server *Server) handleSearch(response http.ResponseWriter, request *http.R
 	}
 
 	server.renderPage(response, "index.html", data)
+}
+
+func linkArtistsWithLocations(artists []Artist, relations []Relations) []Artist {
+	for i, artist := range artists {
+		for _, relation := range relations {
+			if artist.ID == relation.ID {
+				var locations []string
+
+				for location := range relation.DatesLocations {
+					locations = append(locations, location)
+				}
+
+				artists[i].Location = locations
+				break
+			}
+		}
+	}
+	return artists
 }
