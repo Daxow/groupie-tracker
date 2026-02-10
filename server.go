@@ -1,25 +1,34 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"fmt"
 	"strings"
 )
 
 type Server struct {
 	Artists   []Artist
+	Locations []Location
+	Dates     []Date
+	Relations []Relations
 	Templates *template.Template
 }
 
 func NewServer() *Server {
 	artists := fetchArtists()
+	locations := fetchLocations()
+	dates := fetchDates()
+	relations := fetchRelations()
 
 	templates := template.Must(template.ParseGlob("templates/*.html"))
 
 	return &Server{
 		Artists:   artists,
+		Locations: locations,
+		Dates:     dates,
+		Relations: relations,
 		Templates: templates,
 	}
 }
@@ -37,7 +46,7 @@ func (server *Server) handleHome(response http.ResponseWriter, request *http.Req
 		return
 	}
 
-	data := PageData {
+	data := PageData{
 		Query:   "",
 		Artists: server.Artists,
 	}
