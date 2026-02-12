@@ -6,13 +6,14 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"encoding/json"
 )
 
 type Server struct {
 	Artists   []Artist
 	Locations []Location
 	Dates     []Date
-	Relations []Relations
+	Relations []Relation
 	Templates *template.Template
 }
 
@@ -24,7 +25,14 @@ func NewServer() *Server {
 
 	artists = linkArtistsWithLocations(artists, relations)
 
-	templates := template.Must(template.ParseGlob("templates/*.html"))
+	funcMap := template.FuncMap{
+		"json": func(data any) template.JS {
+			jsonEncodedData, _ := json.Marshal(data)
+			return template.JS(jsonEncodedData)
+		},
+	}
+
+	templates := template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*.html"))
 
 	return &Server{
 		Artists:   artists,
@@ -38,6 +46,7 @@ func NewServer() *Server {
 func (server *Server) RegisterRoutes() {
 	http.HandleFunc("/", server.handleHome)
 	http.HandleFunc("/search", server.handleSearch)
+	http.HandleFunc("/api/artists", server.handleArtistsAPI)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 }
@@ -99,7 +108,7 @@ func SearchArtists(artists []Artist, search string) []Artist {
 		}
 
 		if !found {
-			for _, location := range artist.Location {
+			for _, location := range artist.Locations {
 				if strings.Contains(strings.ToLower(location), search) {
 					found = true
 					break
@@ -136,7 +145,7 @@ func (server *Server) handleSearch(response http.ResponseWriter, request *http.R
 	server.renderPage(response, "index.html", data)
 }
 
-func linkArtistsWithLocations(artists []Artist, relations []Relations) []Artist {
+func linkArtistsWithLocations(artists []Artist, relations []Relation) []Artist {
 	for i, artist := range artists {
 		for _, relation := range relations {
 			if artist.ID == relation.ID {
@@ -146,10 +155,15 @@ func linkArtistsWithLocations(artists []Artist, relations []Relations) []Artist 
 					locations = append(locations, location)
 				}
 
-				artists[i].Location = locations
+				artists[i].Locations = locations
 				break
 			}
 		}
 	}
 	return artists
+}
+
+func (server *Server) handleArtistsAPI(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(response).Encode(server.Artists)
 }

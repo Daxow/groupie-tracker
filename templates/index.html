@@ -8,7 +8,7 @@
 <h1>Groupie Tracker</h1>
 
 <form class="search" action="/search" method="GET">
-    <input type="text" name="query" placeholder="Rechercher..." value="{{.Query}}">
+    <input type="text" id="searchInput" name="query" placeholder="Rechercher..." value="{{.Query}}">
     <button type="submit">Rechercher</button>
 </form>
 
@@ -17,24 +17,17 @@
     <div class="image">
         <img src="{{.Image}}">
         <h2>{{.Name}}</h2>
-        <p>Créé en {{.CreationDate}}<br>
-            Premier album : {{.FirstAlbum}}</p>
-        <p>Membres : {{range .Members}}{{.}}, {{end}}</p>
-        <p>Concerts :</p>
-         <ul>
-            {{range .Concerts}}
-                <li>
-                    <strong>{{.Location}}</strong>
-                    <ul>
-                        {{range .Dates}}
-                            <li>{{.}}</li>
-                        {{end}}
-                    </ul>
-                </li>
-            {{end}}
-         </ul>
+        <p>Créé en {{.CreationDate}}</p>
+        <p>Premier album : {{.FirstAlbum}}</p>
+        <p>Membres :</p>
+        <p> {{range .Members}}{{.}}, {{end}}</p>
+        <p>Lieux de concert :</p>
+        <p>{{range .Locations}}{{.}}, {{end}}</p>
     </div>
     {{end}}
 </div>
+
+<script src="/static/script.js"></script>
+
 </body>
 </html>

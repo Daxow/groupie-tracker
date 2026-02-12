@@ -7,12 +7,12 @@ type Artist struct {
 	Members      []string `json:"members"`
 	CreationDate int      `json:"creationDate"`
 	FirstAlbum   string   `json:"firstAlbum"`
-	Location	 []string `json:"-"`
+	Locations    []string `json:"-"`
 }
 
 type Location struct {
-	ID		 int      `json:"id"`
-	Location []string `json:"location"`
+	ID        int      `json:"id"`
+	Locations []string `json:"locations"`
 }
 
 type Date struct {
@@ -20,7 +20,19 @@ type Date struct {
 	Dates []string `json:"dates"`
 }
 
-type Relations struct {
-	ID        int              `json:"id"`
+type Relation struct {
+	ID             int                 `json:"id"`
 	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+type LocationResponse struct {
+	Index []Location `json:"index"`
+}
+
+type DateResponse struct {
+	Index []Date `json:"index"`
+}
+
+type RelationResponse struct {
+	Index []Relation `json:"index"`
 }

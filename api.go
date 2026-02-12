@@ -48,13 +48,13 @@ func fetchLocations() []Location {
 		log.Fatal("Erreur lecture réponse :", err)
 	}
 
-	var locations []Location
-	err = json.Unmarshal(body, &locations)
+	var response LocationResponse
+	err = json.Unmarshal(body, &response)
 	if err != nil {
 		log.Fatal("Erreur parsing JSON :", err)
 	}
 
-	return locations
+	return response.Index
 }
 
 func fetchDates() []Date {
@@ -71,16 +71,16 @@ func fetchDates() []Date {
 		log.Fatal("Erreur lecture réponse :", err)
 	}
 
-	var dates []Date
-	err = json.Unmarshal(body, &dates)
+	var response DateResponse
+	err = json.Unmarshal(body, &response)
 	if err != nil {
 		log.Fatal("Erreur parsing JSON :", err)
 	}
 
-	return dates
+	return response.Index
 }
 
-func fetchRelations() []Relations {
+func fetchRelations() []Relation {
 	url := "https://groupietrackers.herokuapp.com/api/relation"
 
 	resp, err := http.Get(url)
@@ -94,11 +94,11 @@ func fetchRelations() []Relations {
 		log.Fatal("Erreur lecture réponse :", err)
 	}
 
-	var relations []Relations
-	err = json.Unmarshal(body, &relations)
+	var response RelationResponse
+	err = json.Unmarshal(body, &response)
 	if err != nil {
 		log.Fatal("Erreur parsing JSON :", err)
 	}
 
-	return relations
+	return response.Index
 }
