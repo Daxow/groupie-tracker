@@ -7,10 +7,14 @@
 <body>
 <h1>Groupie Tracker</h1>
 
-<form class="search" action="/search" method="GET">
-    <input type="text" id="searchInput" name="query" placeholder="Rechercher..." value="{{.Query}}">
-    <button type="submit">Rechercher</button>
-</form>
+<div class="search-container">
+    <form class="search" action="/search" method="GET">
+        <input type="text" id="searchInput" name="query" placeholder="Rechercher..." value="{{.Query}}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <div id="suggestions" class="suggestions"></div>
+</div>
 
 <div class="artists">
     {{range .Artists}}

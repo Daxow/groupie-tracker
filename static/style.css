@@ -70,3 +70,30 @@ h1 {
     cursor: pointer;
     
 }
+
+.search-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.suggestions {
+    position: absolute;
+    top: 60px;
+    width: min(500px, 80vw);
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.suggestions div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions div:hover {
+    background-color: #eeeeee;
+}
