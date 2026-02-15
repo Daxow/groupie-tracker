@@ -4,7 +4,6 @@ fetch("/api/artists")
     .then(response => response.json())
     .then(data => {
         allArtists = data
-        console.log(allArtists)
     })
 
 const searchInput = document.getElementById("searchInput")
@@ -12,7 +11,7 @@ const suggestionsContainer = document.getElementById("suggestions")
 
 searchInput.addEventListener("input", function () {
 
-    const searchValue = searchInput.value.toLowerCase()
+    const searchValue = searchInput.value.toLowerCase().trim()
 
     suggestionsContainer.innerHTML = ""
 
@@ -20,33 +19,48 @@ searchInput.addEventListener("input", function () {
         return
     }
 
-    const filteredArtists = allArtists.filter(function (artist) {
+    const suggestions = new Set()
+    
+    allArtists.forEach(function (artist) {
 
-        const nameMatch = artist.name && artist.name.toLowerCase().includes(searchValue)
+        if (artist.name && artist.name.toLowerCase().includes(searchValue)) {
+            suggestions.add(artist.name + " - Artiste")
+        }
 
-        const membersMatch = artist.members && artist.members.some(function (member) {
-                return member.toLowerCase().includes(searchValue)
+        if (artist.members) {
+            artist.members.forEach(function (member) {
+                if (member.toLowerCase().includes(searchValue)) {
+                    suggestions.add(member + " - Membre")
+                }
             })
+        }
 
-        const creationMatch = artist.creationDate && artist.creationDate.toString().includes(searchValue)
+        if (artist.creationDate && artist.creationDate.toString().includes(searchValue)) {
+            suggestions.add(artist.creationDate + " - Date de création")
+        }
 
-        const firstAlbumMatch = artist.firstAlbum && artist.firstAlbum.toLowerCase().includes(searchValue)
+        if (artist.firstAlbum && artist.firstAlbum.toLowerCase().includes(searchValue)) {
+            suggestions.add(artist.firstAlbum + " - Premier Album")
+        }
 
-        const locationMatch = artist.locations && artist.locations.some(function (location) {
-                return location.toLowerCase().includes(searchValue)
+        if (artist.locations) {
+            artist.locations.forEach(function (location) {
+                if (location.toLowerCase().includes(searchValue)) {
+                    suggestions.add(location + " - Lieux de concert")
+                }
             })
-
-        return nameMatch || membersMatch || creationMatch || firstAlbumMatch || locationMatch
+        }
     })
 
-    filteredArtists.forEach(function (artist) {
+    suggestions.forEach(function (text) {
 
         const suggestionElement = document.createElement("div")
-        suggestionElement.textContent = artist.name
+        suggestionElement.textContent = text
 
         suggestionElement.addEventListener("click", function () {
-            searchInput.value = artist.name
+            searchInput.value = text.split(" - ")[0]
             suggestionsContainer.innerHTML = ""
+            searchInput.form.submit()
         })
 
         suggestionsContainer.appendChild(suggestionElement)
