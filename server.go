@@ -165,5 +165,23 @@ func linkArtistsWithLocations(artists []Artist, relations []Relation) []Artist {
 
 func (server *Server) handleArtistsAPI(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(response).Encode(server.Artists)
+
+	var artistsWithLocations []map[string]any
+
+	for _, artist := range server.Artists {
+
+		artistMap := map[string]any{
+			"id":           artist.ID,
+			"image":        artist.Image,
+			"name":         artist.Name,
+			"members":      artist.Members,
+			"creationDate": artist.CreationDate,
+			"firstAlbum":   artist.FirstAlbum,
+			"locations":    artist.Locations,
+		}
+
+		artistsWithLocations = append(artistsWithLocations, artistMap)
+	}
+
+	json.NewEncoder(response).Encode(artistsWithLocations)
 }
