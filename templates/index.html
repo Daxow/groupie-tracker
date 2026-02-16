@@ -16,6 +16,45 @@
     <div id="suggestions" class="suggestions"></div>
 </div>
 
+<form action="/filter" method="GET" class="filters">
+
+    <div class="filter-group">
+        <label>Date de création (année)</label>
+        <div class="range-inputs">
+            <input type="number" name="creationMin" placeholder="Min">
+            <input type="number" name="creationMax" placeholder="Max">
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <label>Premier album (année)</label>
+        <div class="range-inputs">
+            <input type="number" name="albumMin" placeholder="Min">
+            <input type="number" name="albumMax" placeholder="Max">
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <label>Membres du groupe</label>
+        <div class="range-inputs">
+            <input type="number" name="membersMin" placeholder="Min">
+            <input type="number" name="membersMax" placeholder="Max">
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <label>Lieux de concert</label>
+        <select name="locations" multiple size="1" class="locations-select">
+            {{range .Locations}}
+                <option value="{{.}}">{{.}}</option>
+            {{end}}
+        </select>
+    </div>
+
+    <button type="submit">Filtrer</button>
+
+</form>
+
 <div class="artists">
     {{range .Artists}}
     <div class="image">

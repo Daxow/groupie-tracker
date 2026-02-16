@@ -40,13 +40,13 @@ searchInput.addEventListener("input", function () {
         }
 
         if (artist.firstAlbum && artist.firstAlbum.toLowerCase().includes(searchValue)) {
-            suggestions.add(artist.firstAlbum + " - Premier Album")
+            suggestions.add(artist.firstAlbum + " - Premier album")
         }
 
         if (artist.locations) {
             artist.locations.forEach(function (location) {
                 if (location.toLowerCase().includes(searchValue)) {
-                    suggestions.add(location + " - Lieux de concert")
+                    suggestions.add(location + " - Lieu de concert")
                 }
             })
         }

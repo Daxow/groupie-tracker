@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"strings"
 	"encoding/json"
+	"strconv"
+	"sort"
+
 )
 
 type Server struct {
@@ -15,6 +18,12 @@ type Server struct {
 	Dates     []Date
 	Relations []Relation
 	Templates *template.Template
+}
+
+type PageData struct {
+	Query   string
+	Artists []Artist
+	Locations []string
 }
 
 func NewServer() *Server {
@@ -47,6 +56,7 @@ func (server *Server) RegisterRoutes() {
 	http.HandleFunc("/", server.handleHome)
 	http.HandleFunc("/search", server.handleSearch)
 	http.HandleFunc("/api/artists", server.handleArtistsAPI)
+	http.HandleFunc("/filter", server.handleFilter)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 }
@@ -60,6 +70,7 @@ func (server *Server) handleHome(response http.ResponseWriter, request *http.Req
 	data := PageData{
 		Query:   "",
 		Artists: server.Artists,
+		Locations: GetUniqueLocations(server.Artists),
 	}
 
 	server.renderPage(response, "index.html", data)
@@ -124,11 +135,6 @@ func SearchArtists(artists []Artist, search string) []Artist {
 	return result
 }
 
-type PageData struct {
-	Query   string
-	Artists []Artist
-}
-
 func (server *Server) handleSearch(response http.ResponseWriter, request *http.Request) {
 	query := strings.TrimSpace(request.URL.Query().Get("query"))
 
@@ -140,6 +146,7 @@ func (server *Server) handleSearch(response http.ResponseWriter, request *http.R
 	data := PageData{
 		Query:   query,
 		Artists: artists,
+		Locations: GetUniqueLocations(server.Artists),
 	}
 
 	server.renderPage(response, "index.html", data)
@@ -184,4 +191,108 @@ func (server *Server) handleArtistsAPI(response http.ResponseWriter, request *ht
 	}
 
 	json.NewEncoder(response).Encode(artistsWithLocations)
+}
+
+func FilterArtists(artists []Artist, creationMin, creationMax int, albumMin, albumMax int, membersMin, membersMax int, selectedLocations []string) []Artist {
+    var result []Artist
+
+    for _, artist := range artists {
+
+        if creationMin != 0 && artist.CreationDate < creationMin {
+            continue
+        }
+        if creationMax != 0 && artist.CreationDate > creationMax {
+            continue
+        }
+
+        albumYear := 0
+        if len(artist.FirstAlbum) >= 4 {
+    		yearString := artist.FirstAlbum[len(artist.FirstAlbum)-4:]
+    		fmt.Sscanf(yearString, "%d", &albumYear)
+        }
+
+        if albumMin != 0 && albumYear < albumMin {
+            continue
+        }
+        if albumMax != 0 && albumYear > albumMax {
+            continue
+        }
+
+        membersCount := len(artist.Members)
+
+        if membersMin != 0 && membersCount < membersMin {
+            continue
+        }
+        if membersMax != 0 && membersCount > membersMax {
+            continue
+        }
+
+        if len(selectedLocations) > 0 {
+            match := false
+            for _, location := range artist.Locations {
+                for _, selected := range selectedLocations {
+                    if strings.Contains(strings.ToLower(location), strings.ToLower(selected)) {
+                        match = true
+                        break
+                    }
+                }
+            }
+            if !match {
+                continue
+            }
+        }
+
+        result = append(result, artist)
+    }
+
+    return result
+}
+
+func (server *Server) handleFilter(response http.ResponseWriter, request *http.Request) {
+    request.ParseForm()
+
+    creationMin, _ := strconv.Atoi(request.FormValue("creationMin"))
+    creationMax, _ := strconv.Atoi(request.FormValue("creationMax"))
+
+    albumMin, _ := strconv.Atoi(request.FormValue("albumMin"))
+    albumMax, _ := strconv.Atoi(request.FormValue("albumMax"))
+
+    membersMin, _ := strconv.Atoi(request.FormValue("membersMin"))
+    membersMax, _ := strconv.Atoi(request.FormValue("membersMax"))
+
+    selectedLocations := request.Form["locations"]
+
+    filtered := FilterArtists(
+        server.Artists,
+        creationMin, creationMax,
+        albumMin, albumMax,
+        membersMin, membersMax,
+        selectedLocations,
+    )
+
+    data := PageData{
+        Query:   "",
+        Artists: filtered,
+		Locations: GetUniqueLocations(server.Artists),
+    }
+
+    server.renderPage(response, "index.html", data)
+}
+
+func GetUniqueLocations(artists []Artist) []string {
+    locationMap := make(map[string]bool)
+
+    for _, artist := range artists {
+        for _, location := range artist.Locations {
+            locationMap[location] = true
+        }
+    }
+
+    var uniqueLocations []string
+    for location := range locationMap {
+        uniqueLocations = append(uniqueLocations, location)
+    }
+
+	sort.Strings(uniqueLocations)
+    return uniqueLocations
 }

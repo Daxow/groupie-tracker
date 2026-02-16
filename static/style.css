@@ -95,5 +95,42 @@ h1 {
 }
 
 .suggestions div:hover {
-    background-color: #eeeeee;
+    background: #eeeeee;
+}
+
+.filters {
+    justify-content: center;
+    display: flex;
+    align-items: flex-start;
+    gap: 50px;
+    flex-wrap: nowrap;
+    margin-bottom: 40px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group input {
+    width: auto;
+}
+
+.filter-group select {
+    width: auto;
+}
+
+.filters button {
+    margin: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #000000;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.locations-select {
+    margin-top: 7px;
+    width: 250px;
 }
