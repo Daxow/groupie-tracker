@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+<body class="artist-page">
+<h1>
+    <a href="/" class="home-link">Groupie Tracker</a>
+</h1>
+
+<div class="artist-layout">
+
+    <div class="artist-card">
+        <div class="image">
+            <img src="{{.Artist.Image}}">
+            <h2>{{.Artist.Name}}</h2>
+            <p>Créé en {{.Artist.CreationDate}}</p>
+            <p>Premier album : {{.Artist.FirstAlbum}}</p>
+            <p>Membres :</p>
+            <p>{{range .Artist.Members}}{{.}}, {{end}}</p>
+            <p>Lieux de concert :</p>
+            <p>{{range .Artist.Locations}}{{.}}, {{end}}</p>
+        </div>
+    </div>
+
+    <div class="map-layout">
+        <div id="map"></div>
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="/static/artist.js"></script>
+
+</body>
+</html>

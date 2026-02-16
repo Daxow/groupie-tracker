@@ -95,7 +95,7 @@ func fetchRelations() []Relation {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Erreur réseau :", err)
+		log.Println("Erreur réseau :", err)
 		return []Relation{}
 	}
 	defer resp.Body.Close()

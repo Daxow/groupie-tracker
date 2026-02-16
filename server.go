@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"sort"
-
+	"time"
 )
 
 type Server struct {
@@ -26,6 +26,10 @@ type PageData struct {
 	Locations []string
 }
 
+type ArtistPageData struct {
+    Artist Artist
+}
+
 func NewServer() *Server {
 	artists := fetchArtists()
 	locations := fetchLocations()
@@ -33,6 +37,8 @@ func NewServer() *Server {
 	relations := fetchRelations()
 
 	artists = linkArtistsWithLocations(artists, relations)
+	artists = preloadCoordinates(artists)
+
 
 	funcMap := template.FuncMap{
 		"json": func(data any) template.JS {
@@ -57,6 +63,8 @@ func (server *Server) RegisterRoutes() {
 	http.HandleFunc("/search", server.handleSearch)
 	http.HandleFunc("/api/artists", server.handleArtistsAPI)
 	http.HandleFunc("/filter", server.handleFilter)
+	http.HandleFunc("/artist", server.handleArtistPage)
+	http.HandleFunc("/api/artist-locations", server.handleArtistLocationsAPI)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 }
@@ -295,4 +303,132 @@ func GetUniqueLocations(artists []Artist) []string {
 
 	sort.Strings(uniqueLocations)
     return uniqueLocations
+}
+
+func (server *Server) handleArtistPage(response http.ResponseWriter, request *http.Request) {
+
+    idString := request.URL.Query().Get("id")
+    id, err := strconv.Atoi(idString)
+    if err != nil {
+        http.NotFound(response, request)
+        return
+    }
+
+    var selected Artist
+    for _, artist := range server.Artists {
+        if artist.ID == id {
+            selected = artist
+            break
+        }
+    }
+
+    if selected.ID == 0 {
+        http.NotFound(response, request)
+        return
+    }
+
+    data := ArtistPageData{
+        Artist: selected,
+    }
+
+    server.renderPage(response, "artist.html", data)
+}
+
+func (server *Server) handleArtistLocationsAPI(response http.ResponseWriter, request *http.Request) {
+
+    response.Header().Set("Content-Type", "application/json")
+
+    idStr := request.URL.Query().Get("id")
+    id, err := strconv.Atoi(idStr)
+    if err != nil {
+        http.Error(response, "ID invalide", http.StatusBadRequest)
+        return
+    }
+
+    var selected Artist
+    for _, artist := range server.Artists {
+        if artist.ID == id {
+            selected = artist
+            break
+        }
+    }
+
+    if selected.ID == 0 {
+        http.Error(response, "Artiste introuvable", http.StatusNotFound)
+        return
+    }
+
+    json.NewEncoder(response).Encode(selected.Coordinates)
+}
+
+func getCoordinatesFromLocation(location string) (string, string, error) {
+
+    formatted := strings.ReplaceAll(location, " ", "+")
+    url := "https://nominatim.openstreetmap.org/search?q=" + formatted + "&format=json&limit=1"
+
+    request, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        return "", "", err
+    }
+
+    request.Header.Set("User-Agent", "groupie-tracker")
+
+    client := &http.Client{}
+    response, err := client.Do(request)
+    if err != nil {
+        return "", "", err
+    }
+    defer response.Body.Close()
+
+    if response.StatusCode != http.StatusOK {
+        return "", "", fmt.Errorf("Erreur API")
+    }
+
+    var result []struct {
+        Latitude string `json:"lat"`
+        Longitude string `json:"lon"`
+    }
+
+    err = json.NewDecoder(response.Body).Decode(&result)
+    if err != nil || len(result) == 0 {
+        return "", "", fmt.Errorf("Pas de résultat")
+    }
+
+    return result[0].Latitude, result[0].Longitude, nil
+}
+
+func preloadCoordinates(artists []Artist) []Artist {
+
+    locationCache := make(map[string]Coordinate)
+	fmt.Println("Chargement des coordonnées...")
+
+    for i, artist := range artists {
+
+        var coords []Coordinate
+
+        for _, location := range artist.Locations {
+
+            if cached, exists := locationCache[location]; exists {
+                coords = append(coords, cached)
+                continue
+            }
+
+            latitude, longitude, err := getCoordinatesFromLocation(location)
+            if err == nil {
+
+                coordinate := Coordinate{
+                    Latitude: latitude,
+                    Longitude: longitude,
+                }
+
+                locationCache[location] = coordinate
+                coords = append(coords, coordinate)
+                time.Sleep(500 * time.Millisecond)
+            }
+        }
+
+        artists[i].Coordinates = coords
+    }
+
+    return artists
 }

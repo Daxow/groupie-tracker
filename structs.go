@@ -1,13 +1,14 @@
 package main
 
 type Artist struct {
-	ID           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	CreationDate int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    []string `json:"-"`
+	ID           int          `json:"id"`
+	Image        string       `json:"image"`
+	Name         string       `json:"name"`
+	Members      []string     `json:"members"`
+	CreationDate int          `json:"creationDate"`
+	FirstAlbum   string       `json:"firstAlbum"`
+	Locations    []string     `json:"-"`
+	Coordinates  []Coordinate `json:"-"`
 }
 
 type Location struct {
@@ -35,4 +36,9 @@ type DateResponse struct {
 
 type RelationResponse struct {
 	Index []Relation `json:"index"`
+}
+
+type Coordinate struct {
+    Latitude  string `json:"lat"`
+    Longitude string `json:"lon"`
 }
