@@ -12,23 +12,27 @@ func fetchArtists() []Artist {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Erreur réseau :", err)
+		log.Println("Erreur réseau :", err)
+        return []Artist{}
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("Erreur API : statut", resp.StatusCode)
+		log.Println("Erreur API : statut", resp.StatusCode)
+        return []Artist{}
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("Erreur lecture réponse :", err)
+		log.Println("Erreur lecture réponse :", err)
+        return []Artist{}
 	}
 
 	var artists []Artist
 	err = json.Unmarshal(body, &artists)
 	if err != nil {
-		log.Fatal("Erreur parsing JSON :", err)
+		log.Println("Erreur parsing JSON :", err)
+        return []Artist{}
 	}
 
 	return artists
@@ -39,19 +43,22 @@ func fetchLocations() []Location {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Erreur réseau :", err)
+		log.Println("Erreur réseau :", err)
+		return []Location{}
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("Erreur lecture réponse :", err)
+		log.Println("Erreur lecture réponse :", err)
+		return []Location{}
 	}
 
 	var response LocationResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatal("Erreur parsing JSON :", err)
+		log.Println("Erreur parsing JSON :", err)
+		return []Location{}
 	}
 
 	return response.Index
@@ -62,19 +69,22 @@ func fetchDates() []Date {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Erreur réseau :", err)
+		log.Println("Erreur réseau :", err)
+		return []Date{}
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("Erreur lecture réponse :", err)
+		log.Println("Erreur lecture réponse :", err)
+		return []Date{}
 	}
 
 	var response DateResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatal("Erreur parsing JSON :", err)
+		log.Println("Erreur parsing JSON :", err)
+		return []Date{}
 	}
 
 	return response.Index
@@ -86,18 +96,21 @@ func fetchRelations() []Relation {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal("Erreur réseau :", err)
+		return []Relation{}
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal("Erreur lecture réponse :", err)
+		log.Println("Erreur lecture réponse :", err)
+		return []Relation{}
 	}
 
 	var response RelationResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatal("Erreur parsing JSON :", err)
+		log.Println("Erreur parsing JSON :", err)
+		return []Relation{}
 	}
 
 	return response.Index
