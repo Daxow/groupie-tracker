@@ -14,6 +14,7 @@ searchInput.addEventListener("input", function () {
     const searchValue = searchInput.value.toLowerCase().trim()
 
     suggestionsContainer.innerHTML = ""
+    suggestionsContainer.style.display = "none"
 
     if (searchValue.length === 0) {
         return
@@ -64,6 +65,9 @@ searchInput.addEventListener("input", function () {
         })
 
         suggestionsContainer.appendChild(suggestionElement)
+        if (suggestions.size > 0) {
+            suggestionsContainer.style.display = "block"
+        }
     })
 
 })

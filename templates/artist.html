@@ -19,9 +19,19 @@
             <p>Créé en {{.Artist.CreationDate}}</p>
             <p>Premier album : {{.Artist.FirstAlbum}}</p>
             <p>Membres :</p>
-            <p>{{range .Artist.Members}}{{.}}, {{end}}</p>
+            <p>
+                {{ range $i, $m := .Artist.Members -}}
+                    {{- if $i -}}, {{ end -}}
+                    {{- $m -}}
+                {{- end -}}
+            </p>
             <p>Lieux de concert :</p>
-            <p>{{range .Artist.Locations}}{{.}}, {{end}}</p>
+            <p>
+                {{ range $i, $l := .Artist.Locations -}}
+                    {{- if $i -}}, {{ end -}}
+                    {{- $l -}}
+                {{- end -}}
+            </p>
         </div>
     </div>
 

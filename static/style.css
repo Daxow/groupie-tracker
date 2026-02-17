@@ -4,8 +4,8 @@ body {
     margin: 0;
     padding: 20px;
     font-family: "Inconsolata";
-    background: #334155;
-    color: #ffffff;
+    background: #0f172a;
+    color: #f1f5f9;
     font-size: 24px;
 }
 
@@ -22,8 +22,8 @@ h1 {
 }
 
 .image {
-    background-color:#232323;
-    border: 1px solid #000000;
+    background-color:#1e293b;
+    border: 1px solid #334155;
     border-radius: 8px;
     width: 280px;
     padding: 15px;
@@ -45,6 +45,7 @@ h1 {
 .image p {
     margin: 6px 0;
     font-size: 14px;
+    color: #94a3b8;
 }
 
 .search {
@@ -58,17 +59,20 @@ h1 {
     width: min(500px, 80vw);
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #000000;
+    border: 1px solid #334155;
     font-size: 16px;
+    background: #1e293b;
+    color: #f1f5f9;
 }
 
 .search button {
     padding: 10px 14px;
     border-radius: 8px;
-    border: 1px solid #000000;
+    border: none;
     font-size: 16px;
     cursor: pointer;
-    
+    background: #3b82f6;
+    color: white;
 }
 
 .search-container {
@@ -82,11 +86,13 @@ h1 {
     position: absolute;
     top: 60px;
     width: min(500px, 80vw);
-    background-color: white;
-    color: black;
+    background-color: #1e293b;
+    color: #f1f5f9;
     border-radius: 8px;
     overflow: hidden;
     z-index: 10;
+    border: 1px solid #334155;
+    display: none;
 }
 
 .suggestions div {
@@ -95,7 +101,7 @@ h1 {
 }
 
 .suggestions div:hover {
-    background: #eeeeee;
+    background: #334155;
 }
 
 .filters {
@@ -116,20 +122,27 @@ h1 {
 .filter-group input {
     width: 135px;
     border-radius: 5px;
-    border: 1px solid #000000;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #f1f5f9;
 }
 
 .filter-group select {
     width: auto;
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
 }
 
 .filters button {
     margin: 10px;
     padding: 10px 14px;
     border-radius: 8px;
-    border: 1px solid #000000;
+    border: none;
     font-size: 16px;
     cursor: pointer;
+    background: #3b82f6;
+    color: white;
 }
 
 .locations-select{
@@ -167,9 +180,32 @@ h1 {
 
 .home-link:hover {
     text-decoration: none;
+    color: #a8a8a8;
 }
 
 .artist-page h1 {
     position: relative;
     left: -8px;
+}
+
+.image h2 a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.image h2 a:hover {
+    color: #60a5fa;
+}
+
+.search button:hover {
+    background: #2563eb;
+}
+
+.filters button:hover {
+    background: #2563eb;
+}
+
+.filter-group select option {
+    background: #1e293b;
+    color: #f1f5f9;
 }
